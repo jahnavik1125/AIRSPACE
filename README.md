@@ -1,33 +1,61 @@
 # AIRSPACE: Touchless Spatial Human-Computer Interaction Platform
 
-AIRSPACE is a portfolio-grade, full-stack monorepo application that transforms a standard webcam feed into a touchless human-computer interface.
+> **Write. Draw. Create in the Air.**  
+> AIRSPACE is a high-performance spatial computing application that transforms standard webcam feeds into an intuitive touchless creative interface using client-side computer vision, real-time gesture telemetry, and continuous digital ink rendering.
 
 ---
 
-## 🚀 Feature Overview
+## 🖥️ Interface Preview
 
-1. **Air Write (`/air-write`)**: Captures fingertip writing trajectories, segments stroke paths, and classifies characters using a Dynamic Time Warping (DTW) recognition baseline.
-2. **Air Canvas (`/canvas`)**: Interactive spatial sketching board supporting brush tools, vector selections, drag/drop adjustments, and geometric shape classification.
-3. **Math Mode (`/math`)**: Spatial handwriting formula solver that evaluates math equations and displays interactive graph curves.
-4. **AI Lab (`/ai-lab`)**: Context-aware chat hub incorporating canvas objects and hand-tracking metadata to parse natural language instructions.
-5. **Analytics Dashboard (`/analytics`)**: Aggregates interaction telemetry charts including gesture distributions, FPS performance, latency, and canvas operations.
-6. **Guided Calibration (`/settings`)**: Custom profile builder matching users' hand size and joint thresholds.
+### 1. Spatial Workspace & Landing Experience
+![AIRSPACE Landing Page](public/screenshots/landing-page.png)
+
+> **Futuristic Spatial Canvas**: Seamless entry into the live webcam creative environment featuring dark-mode glassmorphism UI, real-time camera state telemetry, mode switching (`Write` / `Shapes`), recording timer, and instant application launch.
 
 ---
 
-## 🎨 Screenshot Placeholders
-*(Include visual previews of spatial gestures tracking and interactive canvases here)*
+### 2. Two-Finger (✌️) Continuous Air Writing
+<div align="center">
+  <img src="public/screenshots/air-writing.png" alt="Two-Finger Air Writing with Midpoint Cursor" width="380" />
+</div>
+
+> **Touchless Marker Handwriting**: Activated by an intentional two-finger pose (index + middle fingers extended with ring and pinky folded). Tracks the exact spatial midpoint between index tip (#8) and middle tip (#12) as the glowing pen cursor. Built with gesture hysteresis, velocity-adaptive ink deposition, and spline gap interpolation to ensure smooth, continuous board-quality handwriting without breaks or jitter.
+
+---
+
+### 3. Spatial Fingertip Geometry (Shapes Mode)
+![Spatial Shapes Mode](public/screenshots/shapes-mode.png)
+
+> **Multi-Hand Dynamic Constellations**: In Shapes Mode, the writing pipeline is cleanly suppressed while fingertip landmarks serve as 3D spatial vertices. Laser edges dynamically connect interacting fingertips between both hands in real time, forming responsive geometric networks and spatial polygons that react naturally to hand depth and movement.
+
+---
+
+### 4. Interactive 3D Gesture Walkthrough
+![Interactive 3D Walkthrough](public/screenshots/interactive-walkthrough.png)
+
+> **Real-Time Onboarding & Gesture Mechanics**: Interactive visual guide breaking down the two-finger (✌️) air-writing lifecycle across 5 distinct phases: *Raise ✌️ &rarr; Midpoint Cursor &rarr; Continuous Ink &rarr; Fold Fingers to Conclude &rarr; Raise ✌️ for New Stroke*. Also includes interactive geometric previews for lines, triangles, quadrilaterals, and spatial networks.
+
+---
+
+## 🚀 Feature Highlights
+
+- **Live Camera as Workspace**: The mirrored camera feed serves as the primary canvas—digital ink and spatial geometry render directly over live video.
+- **Two-Finger (✌️) Air Writing**: Index + Middle extended with midpoint cursor tracking. Zero pinch gesture required.
+- **Palm Eraser**: Full open palm gesture displays a circular eraser halo to clear nearby strokes while preserving surrounding work.
+- **Fingertip Spatial Vertices**: Fingertips form geometric vertices connected by real-time laser edges with multi-hand support.
+- **Advanced Creative Popovers**: Compact vertical floating toolbar providing immediate access to Pen Styles (*Marker, Brush, Neon, Glow, Precision*), continuous stroke sizing with live S-curve preview, curated color palettes, and visual effects.
+- **Composited Recording & Snapshot**: In-browser CanvasStream recorder captures webcam video, digital ink, and spatial shapes into a unified video or high-res PNG snapshot.
+- **Client-Side Privacy**: All MediaPipe landmark detection executes locally in the browser via WebAssembly (WASM). No raw camera frames or biometric streams leave the device.
 
 ---
 
 ## 🏢 Technology Stack & Architecture
 
-- **Frontend**: Next.js 14, React 18, Tailwind CSS, Lucide icons, Chart.js, HTML5 Canvas.
-- **Client Hand Tracking**: MediaPipe JS Hands (WASM core executed client-side).
+- **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, Lucide Icons, HTML5 Canvas.
+- **Client-Side Vision**: MediaPipe Hands via WASM / WebAssembly for real-time 21-landmark 3D hand tracking at 30–60 FPS.
 - **Backend API**: FastAPI, Uvicorn, Python 3.10+, WebSockets.
-- **ORM & Migrations**: SQLAlchemy, Alembic.
-- **Database**: PostgreSQL 15 (Docker containerized).
-- **CV/AI Engines**: Custom packages (`packages/cv` and `packages/ai`) incorporating NumPy, SciPy, and PyTorch skeletons.
+- **ORM & Database**: SQLAlchemy, Alembic, PostgreSQL 15 (Docker containerized).
+- **Computer Vision & AI Engines**: Custom modules (`packages/cv` and `packages/ai`) incorporating NumPy, SciPy, and DTW stroke matching.
 
 ---
 
@@ -36,16 +64,23 @@ AIRSPACE is a portfolio-grade, full-stack monorepo application that transforms a
 ```
 AIRSPACE/
   ├── apps/
-  │   ├── frontend/             # Next.js frontend application
+  │   ├── frontend/             # Next.js spatial camera application & canvas UI
+  │   │   ├── public/           # Static assets and screenshot previews
+  │   │   └── src/
+  │   │       ├── components/   # Workspace, toolbar, and 3D demo components
+  │   │       ├── hooks/        # Camera, MediaPipe hand tracking, and recording hooks
+  │   │       └── utils/        # Gesture classification, stroke renderer, and spatial shapes
   │   └── backend/              # FastAPI backend API & WebSockets server
   ├── packages/
   │   ├── cv/                   # Computer Vision Core landmarks engines
   │   ├── ai/                   # AI algorithms, DTW recognizer, & OCR
   │   └── shared/               # Shared communication message schemas
-  ├── docs/                     # Product, Architecture, & Security docs
-  ├── scripts/                  # Setup, testing, and dev environment runners
+  ├── public/
+  │   └── screenshots/          # High-resolution interface previews for repository
+  ├── docs/                     # Architecture & Product documentation
+  ├── scripts/                  # Setup, testing, and dev runners
   ├── docker-compose.prod.yml   # Production Compose orchestration
-  └── README.md                 # Main workspace documentation
+  └── README.md                 # Main repository showcase documentation
 ```
 
 ---
@@ -77,70 +112,61 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws/spatial
 
 ## 🛠️ Local Development Setup
 
-### 1. Prerequisite Installations
-Ensure Node.js (v18+) and Python (v3.10+) are installed.
+### 1. Prerequisites
+Ensure Node.js (v18+) and Python (v3.10+) are installed on your machine.
 
 ### 2. System Initialization
-Run the setup script to establish Python virtual environment, link CV/AI packages, and install Node modules:
+Run the automated setup script to configure the Python virtual environment, link workspace packages, and install dependencies:
 ```powershell
 ./scripts/setup.ps1
 ```
 
 ### 3. Database Bootstrap
-Run Alembic database migrations:
+Apply database schema migrations via Alembic:
 ```powershell
 cd apps/backend
 alembic upgrade head
 ```
 
-### 4. Running the Dev Stack
-To run backend APIs, frontend servers, and databases concurrently:
+### 4. Running the Development Stack
+Start the frontend Next.js server, backend FastAPI server, and database concurrently:
 ```powershell
 ./scripts/dev.ps1 -Service All
 ```
+Navigate to `http://localhost:3000` to launch AIRSPACE.
 
 ---
 
 ## 🐳 Production Docker Orchestration
 
-Build and boot the entire platform (Next.js production bundle, FastAPI server, and PostgreSQL volumes) using Docker Compose:
-
+To build and run the entire multi-container production stack:
 ```powershell
 docker compose -f docker-compose.prod.yml up --build
 ```
 
 ---
 
-## 🧪 Monorepo Test Commands
+## 🧪 Automated Test Suite
 
-To execute Backend, CV, AI, and Frontend test suites concurrently:
+Execute Backend, CV, AI, and Frontend test suites concurrently:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\test.ps1
 ```
 
----
-
-## ⚙️ AI Provider Configurations
-By default, AIRSPACE uses localized DTW models and custom mathematical scripts for classification. To connect advanced handwriting OCR engines and LLM resolvers, inject:
-`AIRSPACE_AI_API_KEY=your_key` into the environment configuration. If omitted, the system falls back to its local rule-based pipelines.
-
----
-
-## 🔒 Privacy & Data Policy
-AIRSPACE processes video inputs strictly client-side inside the user's browser using MediaPipe WASM. No webcam images, audio streams, or raw frames are sent to the backend or saved to database storage. Personalization calibrations and metric logs can be permanently deleted under **Settings -> Purge History**.
+Or run frontend unit and integration tests directly:
+```powershell
+cd apps/frontend
+npx jest --watchAll=false
+```
 
 ---
 
-## ⚠️ Limitations & Future Work
-- **Handwriting recognition**: Current DTW algorithm maps single character strokes. Deep Learning models (CNN-BiGRU) are experimental.
-- **Hardware constraints**: Optimal performance requires 30 FPS camera capture and adequate ambient lighting.
+## 🔒 Privacy & Edge Security
 
----
-
-## 🤝 Contributing
-Contributions are welcome! Please follow formatting conventions and ensure all test suites pass.
+AIRSPACE executes all computer vision algorithms strictly client-side inside the user's browser runtime using MediaPipe WebAssembly. No webcam images, video streams, or raw facial/biometric data are transmitted over the network or saved to database storage.
 
 ---
 
 ## 📄 License
-This project is released under the MIT License placeholder.
+
+This project is open source and available under the [MIT License](LICENSE).

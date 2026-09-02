@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AirspaceWebSocketMessages",
+  "description": "Contracts for client-server real-time communication messages over WebSockets",
+  "definitions": {
+    "Coordinate": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number", "description": "X position normalized between 0.0 and 1.0" },
+        "y": { "type": "number", "description": "Y position normalized between 0.0 and 1.0" },
+        "z": { "type": "number", "description": "Depth coordinate normalized relative to wrist/camera" }
+      },
+      "required": ["x", "y", "z"]
+    },
+    "HandData": {
+      "type": "object",
+      "properties": {
+        "handedness": { "type": "string", "enum": ["Left", "Right"] },
+        "score": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "landmarks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Coordinate" },
+          "minItems": 21,
+          "maxItems": 21
+        }
+      },
+      "required": ["handedness", "score", "landmarks"]
+    },
+    "CoordinateStreamMsg": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "COORDINATE_STREAM" },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "hands": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/HandData" }
+            },
+            "timestamp": { "type": "integer" }
+          },
+          "required": ["hands", "timestamp"]
+        }
+      },
+      "required": ["type", "payload"]
+    },
+    "GestureEventMsg": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "GESTURE_EVENT" },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "gesture": { "type": "string", "enum": ["HOVER", "PINCH_CLICK", "DRAG", "SWIPE_LEFT", "SWIPE_RIGHT"] },
+            "coordinates": {
+              "type": "object",
+              "properties": {
+                "x": { "type": "number" },
+                "y": { "type": "number" }
+              },
+              "required": ["x", "y"]
+            },
+            "state": { "type": "string", "enum": ["START", "MOVE", "END"] }
+          },
+          "required": ["gesture", "coordinates", "state"]
+        }
+      },
+      "required": ["type", "payload"]
+    },
+    "AiOcrResultMsg": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "const": "AI_OCR_RESULT" },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "mode": { "type": "string", "enum": ["HANDWRITING", "MATH_EXPRESSION"] },
+            "raw_text": { "type": "string" },
+            "latex": { "type": "string" },
+            "confidence": { "type": "number" },
+            "canvas_object_id": { "type": "string" }
+          },
+          "required": ["mode", "raw_text", "latex", "confidence", "canvas_object_id"]
+        }
+      },
+      "required": ["type", "payload"]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cv_core"
+version = "0.1.0"
+description = "Core Computer Vision and Gesture Tracking module for AIRSPACE"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "opencv-python-headless>=4.7.0",
+    "mediapipe>=0.10.0",
+    "numpy>=1.22.0"
+]
